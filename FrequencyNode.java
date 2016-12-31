@@ -16,4 +16,8 @@ class FrequencyNode extends Node {
     public int hashCode() {
 	return frequency * 31;
     }
+
+    public String toString() {
+	return Integer.toString(frequency);
+    }
 }

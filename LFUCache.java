@@ -29,15 +29,17 @@ public class LFUCache<K, V> {
     }
 
     public void delete(K key, V value) {
-	if (kvStore.containsKey(key)) {
-	    LFUCacheEntry<K, V> entry = kvStore.remove(key);
-	    FrequencyNode frequencyNode = entry.frequencyNode;
-	    frequencyNode.lfuCacheEntryList.remove(entry);
-	    if (frequencyNode.lfuCacheEntryList.length == 0) {
-		frequencyMap.remove(frequencyNode.frequency);
-		freqList.remove(frequencyNode);
-	    }
+	if (!kvStore.containsKey(key)) 
+	    return;
+
+	LFUCacheEntry<K, V> entry = kvStore.remove(key);
+	FrequencyNode frequencyNode = entry.frequencyNode;
+	frequencyNode.lfuCacheEntryList.remove(entry);
+	if (frequencyNode.lfuCacheEntryList.length <= 0) {
+	    frequencyMap.remove(frequencyNode.frequency);
+	    freqList.remove(frequencyNode);
 	}
+	size--;
     }
     
     public void delete(LFUCacheEntry<K, V> entry) {
@@ -57,6 +59,7 @@ public class LFUCache<K, V> {
 	    } else {
 		freqList.insertAfter(frequencyMap.get(frequency - 1), frequencyNode);
 	    }
+	    frequencyMap.put(frequency, frequencyNode);
 	} else {
 	    frequencyNode = frequencyMap.get(frequency);
 	}
@@ -64,6 +67,8 @@ public class LFUCache<K, V> {
 	/* Create a new entry node - and insert into freqList of freq 1 */	
 	LFUCacheEntry<K, V> entry = new LFUCacheEntry<K,V>(key, value, frequencyNode);
 	frequencyNode.lfuCacheEntryList.append(entry);
+	kvStore.put(key, entry);
+	size++;
     }
 
     public void set(K key, V value) {
@@ -83,14 +88,12 @@ public class LFUCache<K, V> {
 
 
     public V get(K key) {
-	LFUCacheEntry<K, V> entry = kvStore.get(key);
-	entry.frequencyNode.lfuCacheEntryList.remove(entry);
-	if (entry.frequencyNode.lfuCacheEntryList.length <= 0) {
-	    freqList.remove(entry.frequencyNode);
-	    frequencyMap.remove(entry.frequencyNode);
-	}
-	insert(entry.key, entry.value, entry.frequencyNode.frequency + 1);
+	if (!kvStore.containsKey(key))
+	    return null;
 
+	LFUCacheEntry<K, V> entry = kvStore.get(key);
+	delete(entry);
+	insert(entry.key, entry.value, entry.frequencyNode.frequency + 1);
 	return entry.value;
     }
     
