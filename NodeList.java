@@ -32,8 +32,8 @@ public class NodeList {
 	    node.next = null;
 	    node.prev = tail;
 	    tail = node;
+	    length++;
 	}
-	length++;
     }
 
     public void insertAfter(Node position, Node node) {

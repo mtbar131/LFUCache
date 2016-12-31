@@ -23,4 +23,8 @@ class LFUCacheEntry<K, V> extends Node {
 	return key.hashCode() * 31 + value.hashCode() * 17 + 
 	    frequencyNode.hashCode();
     }
+
+    public String toString() {
+	return "[" + key.toString() + "," + value.toString() + "]";
+    }
 }
