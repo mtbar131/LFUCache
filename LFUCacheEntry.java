@@ -15,13 +15,11 @@ class LFUCacheEntry<K, V> extends Node {
     public boolean equals(Object o) {
 	LFUCacheEntry<K, V> entry = (LFUCacheEntry<K, V>) o;
 	return key.equals(entry.key) &&
-	    value.equals(entry.value) &&
-	    frequencyNode.equals(entry.frequencyNode);
+	    value.equals(entry.value);
     }
 
     public int hashCode() {
-	return key.hashCode() * 31 + value.hashCode() * 17 + 
-	    frequencyNode.hashCode();
+	return key.hashCode() * 31 + value.hashCode() * 17;
     }
 
     public String toString() {
