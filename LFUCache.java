@@ -69,8 +69,10 @@ public class LFUCache<K, V> {
     public void set(K key, V value) {
 	if (capacity == 0)
 	    return;
+	FrequencyNode newFrequencyNode = null;
 	if (kvStore.containsKey(key)) {
 	    /* Remove old key if exists */
+	    newFrequencyNode = getFrequencyNode(kvStore.get(key).frequencyNode.frequency + 1);
 	    delete(kvStore.get(key));
 	} else if (size == capacity) {
 	    /* If cache size if full remove first element from freq list */
@@ -79,12 +81,14 @@ public class LFUCache<K, V> {
 	    delete(entry);
 	    System.out.println("Cache full. Removed entry " + entry);
 	}
-	FrequencyNode newFrequencyNode = getFrequencyNode(1);
+	if (newFrequencyNode == null)
+	    newFrequencyNode = getFrequencyNode(1);
 	LFUCacheEntry<K, V> entry = new LFUCacheEntry<K, V>(key, value, 
 							    newFrequencyNode);
 	kvStore.put(key, entry);
 	newFrequencyNode.lfuCacheEntryList.append(entry);
 	size++;
+	System.out.println("Set new " + entry + " entry, cache size: " + size);
     }
 
 
