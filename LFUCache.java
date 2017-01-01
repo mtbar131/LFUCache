@@ -67,7 +67,8 @@ public class LFUCache<K, V> {
     }
 
     public void set(K key, V value) {
-
+	if (capacity == 0)
+	    return;
 	if (kvStore.containsKey(key)) {
 	    /* Remove old key if exists */
 	    delete(kvStore.get(key));
@@ -88,7 +89,7 @@ public class LFUCache<K, V> {
 
 
     public V get(K key) {
-	if (!kvStore.containsKey(key))
+	if (!kvStore.containsKey(key) || capacity == 0)
 	    return null;
 
 	LFUCacheEntry<K, V> entry = kvStore.get(key);
